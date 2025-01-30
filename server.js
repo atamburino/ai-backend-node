@@ -6,10 +6,9 @@ const OpenAI = require('openai');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Initialize OpenAI client with DeepSeek configuration
+// Initialize OpenAI client
 const openai = new OpenAI({
-  baseURL: 'https://api.deepseek.com/v1',
-  apiKey: process.env.DEEPSEEK_API_KEY
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 // Middleware
@@ -18,10 +17,10 @@ app.use(express.json());
 
 // Test endpoint
 app.get('/', (req, res) => {
-  res.json({ message: 'DeepSeek API server is running' });
+  res.json({ message: 'OpenAI API server is running' });
 });
 
-// DeepSeek chat completion endpoint
+// OpenAI chat completion endpoint
 app.post('/api/chat', async (req, res) => {
   try {
     const { messages } = req.body;
@@ -31,16 +30,16 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const completion = await openai.chat.completions.create({
-      model: 'deepseek-chat',
+      model: 'gpt-3.5-turbo',
       messages,
       temperature: 0.7,
     });
 
     res.json(completion);
   } catch (error) {
-    console.error('Error calling DeepSeek API:', error.message);
+    console.error('Error calling OpenAI API:', error.message);
     res.status(500).json({
-      error: 'Error calling DeepSeek API',
+      error: 'Error calling OpenAI API',
       details: error.message,
     });
   }
