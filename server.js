@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+
 const OpenAI = require('openai');
 
 const app = express();
@@ -12,7 +13,10 @@ const openai = new OpenAI({
 });
 
 // Middleware
-app.use(cors());
+const cors = require('cors');
+app.use(cors({
+  origin: ['https://anointed-ai.vercel.app/']
+}));
 app.use(express.json());
 
 // Test endpoint
