@@ -11,15 +11,41 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// CORS debugging middleware
+app.use((req, res, next) => {
+  console.log('Incoming request from origin:', req.headers.origin);
+  next();
+});
+
 // Middleware
 app.use(cors({
-  origin: ['https://anointed-ai.vercel.app/']
+  origin: [
+    'https://anointed-ai.vercel.app',  // Remove trailing slash
+    'http://localhost:3001',           // Add local development
+    'http://localhost:3002'            // Add alternative local port
+  ],
+  methods: ['GET', 'POST'],            // Specify allowed methods
+  allowedHeaders: ['Content-Type'],    // Specify allowed headers
+  credentials: false                   // Since we're not using credentials
 }));
 app.use(express.json());
 
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path} - Origin: ${req.headers.origin}`);
+  next();
+});
+
 // Test endpoint
 app.get('/', (req, res) => {
-  res.json({ message: 'OpenAI API server is running' });
+  res.json({ 
+    message: 'OpenAI API server is running',
+    allowedOrigins: [
+      'https://anointed-ai.vercel.app',
+      'http://localhost:3001',
+      'http://localhost:3002'
+    ]
+  });
 });
 
 // OpenAI chat completion endpoint
@@ -47,6 +73,21 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: err.message,
+    origin: req.headers.origin
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+  console.log('Allowed origins:', [
+    'https://anointed-ai.vercel.app',
+    'http://localhost:3001',
+    'http://localhost:3002'
+  ]);
 }); 
