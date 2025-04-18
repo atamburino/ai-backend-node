@@ -1,6 +1,6 @@
-# Node.js DeepSeek API Server
+# Node.js Open AI API Server
 
-A simple Node.js server that provides an API endpoint to interact with DeepSeek's AI models.
+A simple Node.js server that provides an API endpoint to interact with Open AI's models.
 
 ## Setup
 
